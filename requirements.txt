@@ -1,5 +1,4 @@
-mcp==1.26.0
-wikipedia==1.4.0
+wikipedia
 wikipedia_sections
 langchain
 langgraph
@@ -8,3 +7,4 @@ langchain-community
 langchain-google-genai
 python-dotenv
 black
+mcp==1.26.0

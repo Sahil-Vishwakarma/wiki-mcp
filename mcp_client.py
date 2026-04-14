@@ -3,7 +3,7 @@ import os
 import shlex
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
-
+from dotenv import load_dotenv
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import AnyMessage, add_messages
 from langgraph.checkpoint.memory import MemorySaver
@@ -16,8 +16,6 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from langchain_mcp_adapters.tools import load_mcp_tools
 from langchain_google_genai import ChatGoogleGenerativeAI
-
-from dotenv import load_dotenv
 
 # MCP server launch config
 server_params = StdioServerParameters(command="python", args=["mcp_server.py"])
@@ -184,6 +182,7 @@ async def main():
     async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
+            load_dotenv()
             tools = await load_mcp_tools(session)
             agent = await create_graph(session)
 

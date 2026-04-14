@@ -1,7 +1,6 @@
 import wikipedia
 from mcp.server.fastmcp import FastMCP
 from pathlib import Path
-from mcp import Context
 
 mcp = FastMCP("WikipediaSearch")
 
@@ -88,21 +87,6 @@ def suggested_titles() -> list[str]:
         return path.read_text(encoding="utf-8").strip().splitlines()
     except Exception as e:
         return [f"Error reading file: {str(e)}"]
-
-
-@mcp.tool
-async def greet_user(ctx: Context) -> str:
-    # Ask the user for their name before personalizing the response
-    result = await ctx.elicit("What is your name?", response_type=str)
-
-    if result.action == "accept":
-        return f"Hello, {result.data}! How can I help you today?"
-    elif result.action == "decline":
-        # User explicitly said no, so respond without a name
-        return "No problem. How can I help you today?"
-    else:
-        # cancel: user dismissed without responding, so keep it open
-        return "Whenever you are ready, feel free to ask."
 
 
 # Run the MCP server
