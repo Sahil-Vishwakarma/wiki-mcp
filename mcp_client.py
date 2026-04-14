@@ -18,14 +18,13 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 
 # MCP server launch config
-server_params = StdioServerParameters(
-    command="python",
-    args=["mcp_server.py"]
-)
+server_params = StdioServerParameters(command="python", args=["mcp_server.py"])
+
 
 # LangGraph state definition
 class State(TypedDict):
     messages: Annotated[List[AnyMessage], add_messages]
+
 
 async def create_graph(session):
     # Load tools from MCP server
@@ -33,17 +32,20 @@ async def create_graph(session):
 
     # LLM configuration (system prompt can be added later
     llm = ChatGoogleGenerativeAI(
-        model="gemini-flash-latest",
-        temperature=0,
-        google_api_key=os.getenv("API-KEY")
+        model="gemini-flash-latest", temperature=0, google_api_key=os.getenv("API-KEY")
     )
     llm_with_tools = llm.bind_tools(tools)
 
     # Prompt template with user/assistant chat only
-    prompt_template = ChatPromptTemplate.from_messages([
-        ("system", "You are a helpful assistant that uses tools to search Wikipedia."),
-        MessagesPlaceholder("messages")
-    ])
+    prompt_template = ChatPromptTemplate.from_messages(
+        [
+            (
+                "system",
+                "You are a helpful assistant that uses tools to search Wikipedia.",
+            ),
+            MessagesPlaceholder("messages"),
+        ]
+    )
 
     chat_llm = prompt_template | llm_with_tools
 
@@ -56,12 +58,11 @@ async def create_graph(session):
     graph = StateGraph(State)
     graph.add_node("chat_node", chat_node)
     graph.add_node("tool_node", ToolNode(tools=tools))
-    
+
     graph.add_edge(START, "chat_node")
-    graph.add_conditional_edges("chat_node", tools_condition, {
-        "tools": "tool_node",
-        "__end__": END
-    })
+    graph.add_conditional_edges(
+        "chat_node", tools_condition, {"tools": "tool_node", "__end__": END}
+    )
     graph.add_edge("tool_node", "chat_node")
 
     return graph.compile(checkpointer=MemorySaver())
@@ -85,7 +86,7 @@ async def main():
                 try:
                     response = await agent.ainvoke(
                         {"messages": user_input},
-                        config={"configurable": {"thread_id": "wiki-session"}}
+                        config={"configurable": {"thread_id": "wiki-session"}},
                     )
                     print("AI:", response["messages"][-1].content)
                 except Exception as e:
