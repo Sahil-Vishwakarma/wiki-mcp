@@ -1,0 +1,9 @@
+mcp==1.26.0
+wikipedia==1.4.0
+wikipedia_sections
+langchain
+langgraph
+langchain-mcp-adapters
+langchain-community
+langchain-google-genai
+python-dotenv
