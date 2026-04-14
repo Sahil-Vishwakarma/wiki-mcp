@@ -36,7 +36,7 @@ async def create_graph(session):
     llm = ChatGoogleGenerativeAI(
         model="gemini-flash-latest",
         temperature=0,
-        google_api_key="AIzaSyDYNX3cANXYM9LHOF-zcjhP0Put079JUNk",
+        google_api_key=os.getenv("GEMINI_API_KEY"),
     )
     llm_with_tools = llm.bind_tools(tools)
 
